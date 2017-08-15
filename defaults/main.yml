@@ -1,0 +1,13 @@
+unifi_user: "dockit"
+unifi_group: "docker"
+unifi_docker_host: "tcp://{{lookup('dig', ansible_fqdn)}}:2376"
+unifi_docker_cacert_path: "{{lookup('env', 'HOME')}}/.docker/machines/machine/local/ca.pem"
+unifi_docker_key_path: "{{lookup('env', 'HOME')}}/.docker/machines/machine/local/key.pem"
+unifi_docker_cert_path: "{{lookup('env', 'HOME')}}/.docker/machines/machine/local/cert.pem"
+unifi_docker_tls_hostname: "{{ansible_fqdn}}"
+unifi_data_path: "/opt/unifi/data"
+unifi_log_path: "/opt/unifi/logs"
+unifi_internal_ip: "{{ansible_default_ipv4.address}}"
+unifi_whitelist: []
+unifi_admin_whitelist: []
+unifi_name: "unificorn"

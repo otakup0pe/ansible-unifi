@@ -1,0 +1,14 @@
+unifi_admin_ports:
+  - 8080
+  - 8443
+unifi_ports:
+  - 8843
+  - 8880
+  - 6789
+unifi_udp_ports:
+  - 3478
+  - 10001
+unifi_directories:
+  - "{{unifi_log_path}}"
+  - "{{unifi_data_path}}"
+  

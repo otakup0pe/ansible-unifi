@@ -1,0 +1,71 @@
+- name: "carve some tcp admin holes in the wall"
+  ufw:
+    from_ip: "{{item[0]}}"
+    to_ip: "{{unifi_internal_ip}}"
+    direction: "in"
+    proto: "tcp"
+    rule: "allow"
+    to_port: "{{item[1]}}"
+  with_nested:
+    - "{{unifi_whitelist}}"
+    - "{{unifi_ports}}"
+- name: "this hole is made for tcp"
+  ufw:
+    from_ip: "{{item[0]}}"
+    to_ip: "{{unifi_internal_ip}}"
+    direction: "in"
+    proto: "tcp"
+    rule: "allow"
+    to_port: "{{item[1]}}"
+  with_nested:
+    - "{{unifi_admin_whitelist}}"
+    - "{{unifi_admin_ports}}"
+- name: "open up your heart and let the udp flow through"
+  ufw:
+    from_ip: "{{item[0]}}"
+    to_ip: "{{unifi_internal_ip}}"
+    direction: "in"
+    proto: "udp"
+    rule: "allow"
+    to_port: "{{item[1]}}"
+  with_nested:
+    - "{{unifi_whitelist}}"
+    - "{{unifi_udp_ports}}"    
+- name: "without persistence we are nothing"
+  file:
+    path: "{{item}}"
+    state: directory
+    owner: "{{unifi_user}}"
+    group: "{{unifi_group}}"
+    mode: 0770
+  with_items: "{{unifi_directories}}"
+- name: "introspect your own existence"
+  command: >
+    docker inspect --format \{\{.State.Running\}\} {{unifi_name}}
+  ignore_errors: True
+  changed_when: no
+  register: unifi_container_check
+- name: "this is it this is the moment"
+  become: no
+  delegate_to: 'localhost'
+  docker_container:
+    name: "{{unifi_name}}"
+    docker_host: "tcp://{{unifi_docker_host}}:2376"
+    cacert_path: "{{unifi_docker_cacert_path}}"
+    key_path: "{{unifi_docker_key_path}}"
+    cert_path:  "{{unifi_docker_cert_path}}"
+    tls_hostname: "{{unifi_docker_host}}"
+    tls: yes
+    recreate: "yes"
+    published_ports:
+      - "{{unifi_internal_ip}}:8080:8080"
+      - "{{unifi_internal_ip}}:8443:8443"
+      - "{{unifi_internal_ip}}:3478:3478"
+      - "{{unifi_internal_ip}}:10001:10001"
+    image: "jacobalberty/unifi"
+    volumes:
+      - "{{unifi_data_path}}:/var/lib/unifi"
+      - "{{unifi_log_path}}:/var/log/unifi"
+  when: >
+    unifi_container_check.rc == 1 or
+    unifi_container_check.stdout == "false"
