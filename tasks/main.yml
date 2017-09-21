@@ -66,6 +66,7 @@
     volumes:
       - "{{unifi_data_path}}:/var/lib/unifi"
       - "{{unifi_log_path}}:/var/log/unifi"
+    restart_policy: "{{unifi_restart_policy}}"
   when: >
     unifi_container_check.rc == 1 or
     unifi_container_check.stdout == "false"

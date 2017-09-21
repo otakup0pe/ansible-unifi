@@ -11,3 +11,4 @@ unifi_internal_ip: "{{ansible_default_ipv4.address}}"
 unifi_whitelist: []
 unifi_admin_whitelist: []
 unifi_name: "unificorn"
+unifi_restart_policy: "unless-stopped"
