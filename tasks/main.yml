@@ -40,9 +40,16 @@
     mode: 0770
   with_items: "{{unifi_directories}}"
 - name: "introspect your own existence"
+  delegate_to: localhost
+  become: no
   command: >
-    docker inspect --format \{\{.State.Running\}\} {{unifi_name}}
-  ignore_errors: True
+    docker -H tcp://{{promfriends_docker_host}}:2376
+    --tlscert {{promfriends_docker_cert_path}}
+    --tlskey {{promfriends_docker_key_path}}
+    --tlscacert {{promfriends_docker_cacert_path}}
+    --tlsverify
+    inspect --format \{\{.State.Running\}\} {{unifi_name}}
+  ignore_errors: yes
   changed_when: no
   register: unifi_container_check
 - name: "this is it this is the moment"
@@ -58,8 +65,8 @@
     tls: yes
     recreate: "yes"
     published_ports:
-      - "{{unifi_internal_ip}}:8080:8080"
-      - "{{unifi_internal_ip}}:8443:8443"
+      - "{{unifi_internal_ip}}:{{unifi_admin_http}}:8080"
+      - "{{unifi_internal_ip}}:{{unifi_admin_https}}:8443"
       - "{{unifi_internal_ip}}:3478:3478"
       - "{{unifi_internal_ip}}:10001:10001"
     image: "jacobalberty/unifi"

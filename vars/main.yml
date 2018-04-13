@@ -1,9 +1,9 @@
 unifi_admin_ports:
-  - 8080
-  - 8443
+  - "{{unifi_admin_http}}"
+  - "{{unifi_admin_https}}"
 unifi_ports:
-  - 8843
-  - 8880
+  - "{{unifi_admin_http}}"
+  - "{{unifi_admin_https}}"
   - 6789
 unifi_udp_ports:
   - 3478
