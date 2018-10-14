@@ -1,0 +1,13 @@
+---
+galaxy_info:
+  author: Jonathan Freedman
+  license: MIT
+  galaxy_tags:
+    - network
+    - ubiquity
+  min_ansible_version: 1.9
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+dependencies: []
